@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - bgfar
+  - bgmiddle
+  - bgnear
+  - 
+  - items
+  - player
+  - 
+  - hidePlayer
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: back
+    uniqueID: 553961561
+    locked: 0
+  - name: bgFar
+    uniqueID: 1870528885
+    locked: 0
+  - name: bgMiddle
+    uniqueID: 2304764981
+    locked: 0
+  - name: bgNear
+    uniqueID: 362712465
+    locked: 0
+  - name: reserve1
+    uniqueID: 1191683117
+    locked: 0
+  - name: playerBack
+    uniqueID: 1274535949
+    locked: 0
+  - name: player
+    uniqueID: 3209585539
+    locked: 0
+  - name: playerFront
+    uniqueID: 2714276409
+    locked: 0
+  - name: nearCam
+    uniqueID: 432897347
+    locked: 0

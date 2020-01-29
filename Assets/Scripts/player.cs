@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class player : MonoBehaviour
+public class Player : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Animator animator;
@@ -29,15 +29,15 @@ public class player : MonoBehaviour
     void FixedUpdate()
     {
         movement();
-        // SwitchAnimation();
-    }    
+        SwitchAnimation();
+    }
     // Start is called before the first frame update
     void movement()
     {
         float horizonInputValue = Input.GetAxis("Horizontal");
         float verticalInputValue = Input.GetAxis("Vertical");
         float faceDirect = Input.GetAxisRaw("Horizontal"); // only -1 and 1 and 0
-        Debug.LogFormat(" {0} {1} GetAxisRaw !", faceDirect, horizonInputValue);  
+        // Debug.LogFormat(" {0} {1} GetAxisRaw !", faceDirect, horizonInputValue);  
         if (justInjure)
         {
             return;
@@ -49,10 +49,12 @@ public class player : MonoBehaviour
         }
 
         // 朝向
-        if (horizonInputValue < 0) {
+        if (horizonInputValue < 0)
+        {
             transform.localScale = new Vector3(-1, 1, 1);
         }
-        if (horizonInputValue > 0) {
+        if (horizonInputValue > 0)
+        {
             transform.localScale = new Vector3(1, 1, 1);
         }
         // 有时候不准  
@@ -69,8 +71,26 @@ public class player : MonoBehaviour
         }
     }
 
+    private void SwitchAnimation()
+    {
+        couldRecover();
+    }
+
+    void couldRecover() 
+    {
+        if ( !justInjure ) {
+            animator.SetBool("getInjure", false);
+        }
+    }
+
+
+    // 碰到设置了 isTrigger Collision 的物体会触发
+    // 结论： OnCollisionEnter方法必须是在两个碰撞物体都不勾选isTrigger的前提下才能进入，反之只要勾选一个isTrigger那么就能进入OnTriggerEnter方法。 OnCollisionEnter和OnTriggerEnter是冲突的不能同时存在的。
+    // https://gameinstitute.qq.com/community/detail/127572
     private void OnTriggerEnter2D(Collider2D collision)
     {
+
+        Debug.LogFormat("Player OnTriggerEnter2D");
         if (collision.CompareTag("Collection"))
         {
             //Destroy(collision.gameObject);
@@ -90,8 +110,9 @@ public class player : MonoBehaviour
                 audios[i].enabled = false;
             }
             // Invoke("Restart", 1f);
-
         }
+
+
     }
 
 
@@ -99,34 +120,41 @@ public class player : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            // Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+            Debug.LogFormat("Player OnCollisionEnter2D ");
+            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
 
-            // if (animator.GetBool("falling"))
-            // {
-            //     enemy.JumpOn();
-            //     //Destroy(collision.gameObject);
-            //     // 杀死敌人还有反弹跳跃的效果
-            //     float shrinkJump = 0.5f;
-            //     rb.velocity = new Vector2(rb.velocity.x, jumpForce * shrinkJump * Time.fixedDeltaTime);
-            //     animator.SetBool("jumping", true);
-            // }
-            // else
-            // {
-            //     justInjure = true;
-            //     animator.SetBool("getInjure", justInjure);
+            if (animator.GetBool("falling"))
+            {
+                enemy.JumpOn();
+                //Destroy(collision.gameObject);
+                // 杀死敌人还有反弹跳跃的效果
+                float shrinkJump = 0.5f;
+                rb.velocity = new Vector2(rb.velocity.x, jumpForce * shrinkJump * Time.fixedDeltaTime);
+                animator.SetBool("jumping", true);
+            }
+            else
+            {
+                justInjure = true;
+                animator.SetBool("getInjure", justInjure);
+                Invoke("afterJustInjure", 0.5f);
+                //这里都是玩家受到伤害  //受到伤害会往行进的反反向弹开
+                if (transform.position.x < collision.gameObject.transform.position.x)
+                {
+                    rb.velocity = new Vector2(-1f * speed * Time.fixedDeltaTime, rb.velocity.y);
+                }
+                if (transform.position.x > collision.gameObject.transform.position.x)
+                {
+                    rb.velocity = new Vector2(speed * Time.fixedDeltaTime, rb.velocity.y);
+                }
 
-            //     //这里都是玩家受到伤害  //受到伤害会往行进的反反向弹开
-            //     if (transform.position.x < collision.gameObject.transform.position.x)
-            //     {
-            //         rb.velocity = new Vector2(-1f * speed * Time.fixedDeltaTime, rb.velocity.y);
-            //     }
-            //     if (transform.position.x > collision.gameObject.transform.position.x)
-            //     {
-            //         rb.velocity = new Vector2(speed * Time.fixedDeltaTime, rb.velocity.y);
-            //     }
-
-            // }
+            }
         }
-    }    
+    }
+
+    private void afterJustInjure() 
+    {   
+        justInjure = false;
+
+    }
 
 }
